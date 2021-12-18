@@ -12,7 +12,7 @@ import freemarker.template.TemplateException;
 import freemarker.template.Version;
 
 public class PageGenerator {
-	private static final String HTML_DIR = "templates/lab1";
+	private static final File TEMPLATE_FOLDER = new File("templates");
 
 	private final Configuration cfg;
 
@@ -21,21 +21,30 @@ public class PageGenerator {
 	}
 
 	private static class Holder {
-		private static final PageGenerator INSTANCE = new PageGenerator();
+		private static final PageGenerator INSTANCE;
+		static {
+			try {
+				INSTANCE = new PageGenerator();
+			} catch (Exception e) {
+				throw new InstantiationError(String.format(
+						"can't instantiate page generator because template folder is invalid, %s", e.getMessage()));
+			}
+		}
 	}
 
 	public String getPage(String filename, Map<String, Object> data) {
-		Writer stream = new StringWriter();
 		try {
-			Template template = cfg.getTemplate(HTML_DIR + File.separator + filename);
+			Template template = cfg.getTemplate(filename);
+			Writer stream = new StringWriter();
 			template.process(data, stream);
+			return stream.toString();
 		} catch (IOException | TemplateException e) {
 			throw new RuntimeException(e);
 		}
-		return stream.toString();
 	}
 
-	private PageGenerator() {
-		cfg = new Configuration(new Version(2,3,31));
+	private PageGenerator() throws IOException {
+		cfg = new Configuration(new Version(2, 3, 31));
+		cfg.setDirectoryForTemplateLoading(TEMPLATE_FOLDER);
 	}
 }

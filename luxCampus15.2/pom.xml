@@ -4,7 +4,7 @@
 	<groupId>training.tasks</groupId>
 	<artifactId>luxCampus15.2</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Online shop</name>
+	<name>Online shop based on embedded Jetty server</name>
 	<description>Simple online shop to practice JEE, JDBC, SQL skills</description>
 	<packaging>jar</packaging>
 
@@ -30,7 +30,7 @@
 
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-webapp</artifactId>
+			<artifactId>jetty-servlet</artifactId>
 			<version>${jetty.version}</version>
 		</dependency>
 

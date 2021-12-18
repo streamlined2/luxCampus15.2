@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -14,37 +13,27 @@ public class AllRequestsServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		Map<String, Object> pageVariables = createPageVariablesMap(req);
-		pageVariables.put("message", "Hi!");
-
 		resp.setContentType("text/html;charset=UTF-8");
 		resp.setStatus(HttpServletResponse.SC_OK);
-
+		Map<String, Object> pageVariables = createPageVariablesMap(req);
+		String message = req.getParameter("value");
+		pageVariables.put("message", Objects.requireNonNullElse(message, "<no message>"));
 		resp.getWriter().append(PageGenerator.instance().getPage("page.html", pageVariables));
 	}
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		Map<String, Object> pageVariables = createPageVariablesMap(req);
-		String message = req.getParameter("message");
-		resp.setContentType("text/html;charset=UTF-8");
-		if (Objects.isNull(message) || message.isEmpty()) {
-			resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
-		} else {
-			resp.setStatus(HttpServletResponse.SC_OK);
-		}
-		pageVariables.put("message", message == null ? "" : message);
-		resp.getWriter().append(PageGenerator.instance().getPage("page.html", pageVariables));
+		doGet(req, resp);
 	}
 
 	private static Map<String, Object> createPageVariablesMap(HttpServletRequest request) {
-		Map<String, Object> pageVariables = new HashMap<>();
-		pageVariables.put("method", request.getMethod());
-		pageVariables.put("URL", request.getRequestURL());
-		pageVariables.put("pathInfo", request.getPathInfo());
-		pageVariables.put("sessionId", request.getSession().getId());
-		pageVariables.put("parameters", request.getParameterMap());
-		return pageVariables;
+		var map = new HashMap<String, Object>();
+		map.put("method", request.getMethod());
+		map.put("URL", request.getRequestURL());
+		map.put("pathInfo", request.getPathInfo());
+		map.put("sessionId", request.getSession().getId());
+		map.put("parameters", request.getParameterMap().toString());
+		return map;
 	}
 
 }
