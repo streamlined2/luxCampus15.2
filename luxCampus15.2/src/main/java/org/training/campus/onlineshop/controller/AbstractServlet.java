@@ -18,8 +18,8 @@ import org.training.campus.onlineshop.entity.Product;
 
 public abstract class AbstractServlet extends HttpServlet {
 
-	protected static final String PRODUCT_DAO = "productDao";
-	protected static final String ATTRIBUTES = "attributes";
+	protected static final String PRODUCT_DAO_ATTRIBUTE = "productDao";
+	protected static final String TEMPLATE_PARAMETERS_ATTRIBUTE = "parameters";
 	protected static final String PRODUCTS_ATTRIBUTE = "products";
 	protected static final String CREATE_PRODUCT_ATTRIBUTE = "createProduct";
 	protected static final String PRODUCT_ATTRIBUTE = "product";
@@ -33,35 +33,37 @@ public abstract class AbstractServlet extends HttpServlet {
 		super.init();
 		initProductDao();
 	}
-	
-	public abstract void doWork();
+
+	public abstract void doWork(HttpServletRequest req) throws ServletException;
+
 	public abstract String getRedirectionResource();
 
-	protected Map<String, Object> getAttributes() {
-		Map<String, Object> attributes = (Map<String, Object>) getServletContext().getAttribute(ATTRIBUTES);
+	protected Map<String, Object> getTemplateParameters() {
+		Map<String, Object> attributes = (Map<String, Object>) getServletContext()
+				.getAttribute(TEMPLATE_PARAMETERS_ATTRIBUTE);
 		if (attributes == null) {
 			attributes = new HashMap<>();
-			getServletContext().setAttribute(ATTRIBUTES, attributes);
+			getServletContext().setAttribute(TEMPLATE_PARAMETERS_ATTRIBUTE, attributes);
 		}
 		return attributes;
 	}
 
-	protected Object getAttribute(String name) {
-		return getAttributes().get(name);
+	protected Object getTemplateParameter(String name) {
+		return getTemplateParameters().get(name);
 	}
 
-	protected void setAttribute(String name, Object value) {
-		getAttributes().put(name, value);
+	protected void setTemplateParameter(String name, Object value) {
+		getTemplateParameters().put(name, value);
 	}
 
-	private void initProductDao() throws ServletException {
+	private void initProductDao() {
 		if (getProductDao() == null) {
-			getServletContext().setAttribute(PRODUCT_DAO, createProductDao());
+			getServletContext().setAttribute(PRODUCT_DAO_ATTRIBUTE, createProductDao());
 		}
 	}
 
 	protected ProductDao getProductDao() {
-		return (ProductDao) getServletContext().getAttribute(PRODUCT_DAO);
+		return (ProductDao) getServletContext().getAttribute(PRODUCT_DAO_ATTRIBUTE);
 	}
 
 	private ProductDao createProductDao() {
@@ -81,22 +83,18 @@ public abstract class AbstractServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		resp.setContentType("text/html;charset=UTF-8");
 		resp.setStatus(HttpServletResponse.SC_OK);
-		doWork();
-		resp.getWriter().append(PageGenerator.instance().getPage(getRedirectionResource(), getAttributes()));
+		doWork(req);
+		resp.getWriter().append(PageGenerator.instance().getPage(getRedirectionResource(), getTemplateParameters()));
 	}
 
 	protected void fetchProducts() {
-		setAttribute(PRODUCTS_ATTRIBUTE, getProductDao().getAll());
+		setTemplateParameter(PRODUCTS_ATTRIBUTE, getProductDao().getAll());
 	}
 
 	protected Product getProductFromList(HttpServletRequest req) throws ServletException {
-		String itemParameter = req.getParameter(ITEM_PARAMETER);
-		if (itemParameter == null)
-			throw new ServletException("missing item parameter of product to operate on");
-
-		List<Product> products = (List<Product>) getAttribute(PRODUCTS_ATTRIBUTE);
-		if (products == null)
-			throw new ServletException("missing product list attribute");
+		String itemParameter = defineParameter(req, ITEM_PARAMETER, "missing item parameter of product to operate on");
+		List<Product> products = (List<Product>) defineTemplateParameter(PRODUCTS_ATTRIBUTE,
+				"missing product list attribute");
 
 		int index = Integer.parseInt(itemParameter);
 		if (index <= 0 || index > products.size())
@@ -109,6 +107,14 @@ public abstract class AbstractServlet extends HttpServlet {
 	protected String defineParameter(HttpServletRequest req, String paramName, String exceptionMessage)
 			throws ServletException {
 		String parameter = req.getParameter(paramName);
+		if (parameter == null) {
+			throw new ServletException(exceptionMessage);
+		}
+		return parameter;
+	}
+
+	protected Object defineTemplateParameter(String attrName, String exceptionMessage) throws ServletException {
+		Object parameter = getTemplateParameter(attrName);
 		if (parameter == null) {
 			throw new ServletException(exceptionMessage);
 		}

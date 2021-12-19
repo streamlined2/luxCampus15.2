@@ -1,11 +1,13 @@
 package org.training.campus.onlineshop.controller;
 
+import javax.servlet.http.HttpServletRequest;
+
 public class ListAllProductsServlet extends AbstractServlet {
 
 	protected static final String REDIRECTION_RESOURCE = "product-list.ftl";
 
 	@Override
-	public void doWork() {
+	public void doWork(HttpServletRequest req) {
 		fetchProducts();
 	}
 
