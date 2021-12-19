@@ -5,7 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.training.campus.onlineshop.entity.Product;
 
 public class DeleteProductServlet extends AbstractServlet {
-	
+
 	protected static final String REDIRECTION_RESOURCE = "product-list.ftl";
 
 	@Override

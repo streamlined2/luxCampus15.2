@@ -1,23 +1,13 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Create/modify product</title>
+<title>Modify product</title>
 </head>
 <body>
 	<form>
 		<fieldset>
-			<c:choose>
-				<c:when test="${createProduct}">
-					<legend>Create new product</legend>
-				</c:when>
-				<c:otherwise>
-					<legend>Modify product</legend>
-				</c:otherwise>
-			</c:choose>
+			<legend>Modify product</legend>
 			<table>
 				<tr>
 					<td><label for="name">Name</label></td>
@@ -40,19 +30,9 @@
 				</tr>
 			</table>
 			<hr>
-			<c:choose>
-				<c:when test="${createProduct}">
-					<input type="submit" value="Create"
-						formaction=<c:url value="/saveproduct"/> formmethod="post" />
-				</c:when>
-				<c:otherwise>
-					<input type="submit" value="Save"
-						formaction=<c:url value="/saveproduct"/> formmethod="post" />
-				</c:otherwise>
-			</c:choose>
-			<input type="reset" value="Reset" /> <input type="submit"
-				value="Cancel" formaction=<c:url value="/products"/>
-				formmethod="post" formnovalidate />
+			<input type="submit" value="Save" formaction="/shop/saveproduct" formmethod="post" />
+			<input type="reset" value="Reset" />
+			<input type="submit" value="Cancel" formaction="/shop/products" formmethod="post" formnovalidate />
 		</fieldset>
 	</form>
 </body>

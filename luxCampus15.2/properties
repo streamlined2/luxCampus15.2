@@ -1,3 +1,4 @@
 user=jacksparrow
 password=horriblesecret
 url=jdbc:postgresql://localhost/postgres?currentSchema=onlineshop
+context=/shop
