@@ -19,6 +19,7 @@ import org.training.campus.onlineshop.entity.Product;
 public abstract class AbstractServlet extends HttpServlet {
 
 	protected static final String PRODUCT_DAO_ATTRIBUTE = "productDao";
+	protected static final String CONTEXT_PATH_ATTRIBUTE = "context";
 	protected static final String TEMPLATE_PARAMETERS_ATTRIBUTE = "parameters";
 	protected static final String PRODUCTS_ATTRIBUTE = "products";
 	protected static final String CREATE_PRODUCT_ATTRIBUTE = "createProduct";
@@ -84,6 +85,7 @@ public abstract class AbstractServlet extends HttpServlet {
 		resp.setContentType("text/html;charset=UTF-8");
 		resp.setStatus(HttpServletResponse.SC_OK);
 		doWork(req);
+		setTemplateParameter(CONTEXT_PATH_ATTRIBUTE,getServletContext().getContextPath());
 		resp.getWriter().append(PageGenerator.instance().getPage(getRedirectionResource(), getTemplateParameters()));
 	}
 
