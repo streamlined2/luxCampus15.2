@@ -1,4 +1,4 @@
-package org.training.campus.onlineshop.dao;
+package org.training.campus.onlineshop.dao.jdbc;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.training.campus.onlineshop.dao.DataAccessException;
+import org.training.campus.onlineshop.dao.ProductDao;
 import org.training.campus.onlineshop.entity.Product;
 
 public class JdbcProductDao implements ProductDao {

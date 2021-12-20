@@ -10,7 +10,11 @@ import org.training.campus.onlineshop.entity.Product;
 
 public class SaveProductServlet extends AbstractServlet {
 
-	protected static final String REDIRECTION_RESOURCE = "product-list.ftl";
+	protected static final String REDIRECTION_RESOURCE = "/products";
+
+	public SaveProductServlet() {
+		super(false);
+	}
 
 	@Override
 	public void doWork(HttpServletRequest req) throws ServletException {

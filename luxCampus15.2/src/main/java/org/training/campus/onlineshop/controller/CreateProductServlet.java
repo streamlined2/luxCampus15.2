@@ -5,7 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 
 public class CreateProductServlet extends AbstractServlet {
 
-	protected static final String REDIRECTION_RESOURCE = "new-product.ftl";
+	protected static final String REDIRECTION_RESOURCE = "new-product.html";
 
 	@Override
 	public void doWork(HttpServletRequest req) throws ServletException {

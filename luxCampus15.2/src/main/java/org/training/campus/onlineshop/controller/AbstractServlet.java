@@ -11,10 +11,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.training.campus.onlineshop.PageGenerator;
-import org.training.campus.onlineshop.dao.JdbcProductDao;
 import org.training.campus.onlineshop.dao.ProductDao;
+import org.training.campus.onlineshop.dao.jdbc.JdbcProductDao;
 import org.training.campus.onlineshop.entity.Product;
+import org.training.campus.onlineshop.view.PageGenerator;
 
 public abstract class AbstractServlet extends HttpServlet {
 
@@ -28,6 +28,16 @@ public abstract class AbstractServlet extends HttpServlet {
 	protected static final String PRODUCT_NAME_PARAMETER = "name";
 	protected static final String PRODUCT_PRICE_PARAMETER = "price";
 	protected static final String PRODUCT_CREATION_DATE_PARAMETER = "creationDate";
+
+	private final boolean idempotent;
+
+	protected AbstractServlet() {
+		idempotent = true;
+	}
+
+	protected AbstractServlet(boolean idempotent) {
+		this.idempotent = idempotent;
+	}
 
 	@Override
 	public void init() throws ServletException {
@@ -82,11 +92,17 @@ public abstract class AbstractServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		resp.setContentType("text/html;charset=UTF-8");
-		resp.setStatus(HttpServletResponse.SC_OK);
-		doWork(req);
-		setTemplateParameter(CONTEXT_PATH_ATTRIBUTE,getServletContext().getContextPath());
-		resp.getWriter().append(PageGenerator.instance().getPage(getRedirectionResource(), getTemplateParameters()));
+		setTemplateParameter(CONTEXT_PATH_ATTRIBUTE, getServletContext().getContextPath());
+		if (idempotent) {
+			resp.setContentType("text/html;charset=UTF-8");
+			resp.setStatus(HttpServletResponse.SC_OK);
+			doWork(req);
+			resp.getWriter()
+					.append(PageGenerator.instance().getPage(getRedirectionResource(), getTemplateParameters()));
+		} else {
+			doWork(req);
+			resp.sendRedirect(req.getContextPath() + getRedirectionResource());
+		}
 	}
 
 	protected void fetchProducts() {

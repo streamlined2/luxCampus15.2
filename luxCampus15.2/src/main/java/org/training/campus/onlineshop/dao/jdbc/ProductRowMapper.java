@@ -1,4 +1,4 @@
-package org.training.campus.onlineshop.dao;
+package org.training.campus.onlineshop.dao.jdbc;
 
 import java.math.BigDecimal;
 import java.sql.Date;

@@ -1,4 +1,4 @@
-package org.training.campus.onlineshop;
+package org.training.campus.onlineshop.view;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,7 +39,7 @@ public class PageGenerator {
 			template.process(data, stream);
 			return stream.toString();
 		} catch (IOException | TemplateException e) {
-			throw new RuntimeException(e);
+			throw new ViewException(e);
 		}
 	}
 
