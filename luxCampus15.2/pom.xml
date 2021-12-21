@@ -14,6 +14,7 @@
 		<maven.compiler.target>17</maven.compiler.target>
 		<jetty.version>10.0.7</jetty.version>
 		<exec.mainClass>org.training.campus.onlineshop.Runner</exec.mainClass>
+		<heroku.appName>one-product-online-shop</heroku.appName>
 	</properties>
 
 	<dependencies>
@@ -54,6 +55,7 @@
 	<build>
 		<finalName>luxCampus15.2</finalName>
 		<plugins>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
@@ -75,6 +77,20 @@
 					</execution>
 				</executions>
 			</plugin>
+
+			<plugin>
+				<groupId>com.heroku.sdk</groupId>
+				<artifactId>heroku-maven-plugin</artifactId>
+				<version>3.0.4</version>
+				<configuration>
+					<appName>${heroku.appName}</appName>
+					<jdkVersion>${maven.compiler.source}</jdkVersion>
+					<processTypes>
+						<web>java -jar target/luxCampus15.2.jar</web>
+					</processTypes>
+				</configuration>
+			</plugin>
+
 		</plugins>
 	</build>
 </project>
