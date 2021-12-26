@@ -1,12 +1,10 @@
 package org.training.campus.onlineshop;
 
-import java.io.FileReader;
 import java.util.Objects;
-import java.util.Properties;
 
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.training.campus.onlineshop.controller.AbstractServlet;
 import org.training.campus.onlineshop.controller.CreateProductServlet;
 import org.training.campus.onlineshop.controller.DeleteProductServlet;
 import org.training.campus.onlineshop.controller.ListAllProductsServlet;
@@ -15,37 +13,34 @@ import org.training.campus.onlineshop.controller.SaveProductServlet;
 
 public class Runner {
 
+	private static final String CONTEXT = "/shop";
+	private static final String JDBC_URL_PARAMETER = "url";
+	private static final String JDBC_USER_PARAMETER = "user";
+	private static final String JDBC_PASSWORD_PARAMETER = "password";
+	private static final String SERVER_PORT_PARAMETER = "port";
+
 	public static void main(String[] args) {
+
+		var server = new Server(Integer.parseInt(System.getProperty(SERVER_PORT_PARAMETER)));
 
 		ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
 
-		try (FileReader reader = new FileReader("properties")) {
+		context.setContextPath(CONTEXT);
+		context.setInitParameter(AbstractServlet.JDBC_URL_PARAMETER, System.getProperty(JDBC_URL_PARAMETER));
+		context.setInitParameter(AbstractServlet.JDBC_USER_PARAMETER, Objects.requireNonNullElse(System.getProperty(JDBC_USER_PARAMETER), ""));
+		context.setInitParameter(AbstractServlet.JDBC_PASSWORD_PARAMETER, Objects.requireNonNullElse(System.getProperty(JDBC_PASSWORD_PARAMETER), ""));
 
-			var props = new Properties();
-			props.load(reader);
+		context.addServlet(ListAllProductsServlet.class, "/products");
+		context.addServlet(DeleteProductServlet.class, "/products/delete");
+		context.addServlet(CreateProductServlet.class, "/products/add");
+		context.addServlet(ModifyProductServlet.class, "/products/edit");
+		context.addServlet(SaveProductServlet.class, "/saveproduct");
 
-			final String servletContext = Objects.requireNonNullElse(props.getProperty("context"), "/shop");
+		server.setHandler(context);
 
-			context.setContextPath(servletContext);
-
-			context.setInitParameter("user", props.getProperty("user"));
-			context.setInitParameter("password", props.getProperty("password"));
-			context.setInitParameter("url", props.getProperty("url"));
-
-			context.addServlet(ListAllProductsServlet.class, "/products");
-			context.addServlet(DeleteProductServlet.class, "/products/delete");
-			context.addServlet(CreateProductServlet.class, "/products/add");
-			context.addServlet(ModifyProductServlet.class, "/products/edit");
-			context.addServlet(SaveProductServlet.class, "/saveproduct");
-
-			var server = new Server(9090);
-			var handlerList = new HandlerList();
-			handlerList.addHandler(context);
-			server.setHandler(handlerList);
-
+		try {
 			server.start();
 			server.join();
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

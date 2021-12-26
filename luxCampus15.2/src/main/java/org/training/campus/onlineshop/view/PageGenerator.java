@@ -1,18 +1,16 @@
 package org.training.campus.onlineshop.view;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Map;
 
 import freemarker.template.Configuration;
-import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.Version;
 
 public class PageGenerator {
-	private static final File TEMPLATE_FOLDER = new File("templates");
+	private static final String TEMPLATE_FOLDER = "/templates";
 
 	private final Configuration cfg;
 
@@ -34,9 +32,8 @@ public class PageGenerator {
 
 	public String getPage(String filename, Map<String, Object> data) {
 		try {
-			Template template = cfg.getTemplate(filename);
 			Writer stream = new StringWriter();
-			template.process(data, stream);
+			cfg.getTemplate(filename).process(data, stream);
 			return stream.toString();
 		} catch (IOException | TemplateException e) {
 			throw new ViewException(e);
@@ -45,6 +42,6 @@ public class PageGenerator {
 
 	private PageGenerator() throws IOException {
 		cfg = new Configuration(new Version(2, 3, 31));
-		cfg.setDirectoryForTemplateLoading(TEMPLATE_FOLDER);
+		cfg.setClassForTemplateLoading(getClass(), TEMPLATE_FOLDER);
 	}
 }

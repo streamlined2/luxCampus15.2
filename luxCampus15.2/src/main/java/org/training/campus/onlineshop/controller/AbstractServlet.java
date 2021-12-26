@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +15,10 @@ import org.training.campus.onlineshop.entity.Product;
 import org.training.campus.onlineshop.view.PageGenerator;
 
 public abstract class AbstractServlet extends HttpServlet {
+
+	public static final String JDBC_URL_PARAMETER = "jdbcUrl";
+	public static final String JDBC_USER_PARAMETER = "jdbcUser";
+	public static final String JDBC_PASSWORD_PARAMETER = "jdbcPassword";
 
 	protected static final String PRODUCT_DAO_ATTRIBUTE = "productDao";
 	protected static final String CONTEXT_PATH_ATTRIBUTE = "context";
@@ -78,11 +80,9 @@ public abstract class AbstractServlet extends HttpServlet {
 	}
 
 	private ProductDao createProductDao() {
-		var props = new Properties();
-		props.put("user", getServletContext().getInitParameter("user"));
-		props.put("password", getServletContext().getInitParameter("password"));
-		props.put("url", getServletContext().getInitParameter("url"));
-		return new JdbcProductDao(props);
+		return new JdbcProductDao(getServletContext().getInitParameter(JDBC_URL_PARAMETER),
+				getServletContext().getInitParameter(JDBC_USER_PARAMETER),
+				getServletContext().getInitParameter(JDBC_PASSWORD_PARAMETER));
 	}
 
 	@Override

@@ -86,7 +86,7 @@
 					<appName>${heroku.appName}</appName>
 					<jdkVersion>${maven.compiler.source}</jdkVersion>
 					<processTypes>
-						<web>java -jar target/luxCampus15.2.jar</web>
+						<web>java $JAVA_OPTS -Dport=$PORT -Durl=$JDBC_DATABASE_URL -Duser=$JDBC_DATABASE_USERNAME -Dpassword=$JDBC_DATABASE_PASSWORD -jar target/luxCampus15.2.jar</web>
 					</processTypes>
 				</configuration>
 			</plugin>

@@ -10,8 +10,6 @@ import org.training.campus.onlineshop.entity.Product;
 
 public class SaveProductServlet extends AbstractServlet {
 
-	protected static final String REDIRECTION_RESOURCE = "/products";
-
 	public SaveProductServlet() {
 		super(false);
 	}
@@ -24,7 +22,7 @@ public class SaveProductServlet extends AbstractServlet {
 
 	@Override
 	public String getRedirectionResource() {
-		return REDIRECTION_RESOURCE;
+		return "/products";
 	}
 
 	private void updateSaveProduct(HttpServletRequest req) throws ServletException {
@@ -48,14 +46,12 @@ public class SaveProductServlet extends AbstractServlet {
 	}
 
 	private void updateProductWithParameters(HttpServletRequest req, Product product) throws ServletException {
-		String name = defineParameter(req, PRODUCT_NAME_PARAMETER, "missing product name parameter");
-		String price = defineParameter(req, PRODUCT_PRICE_PARAMETER, "missing product price parameter");
-		String creationDate = defineParameter(req, PRODUCT_CREATION_DATE_PARAMETER,
-				"missing product creation date parameter");
-
-		product.setName(name);
-		product.setPrice(new BigDecimal(price));
-		product.setCreationDate(LocalDate.parse(creationDate, DateTimeFormatter.ISO_LOCAL_DATE));
+		product.setName(defineParameter(req, PRODUCT_NAME_PARAMETER, "missing product name parameter"));
+		product.setPrice(
+				new BigDecimal(defineParameter(req, PRODUCT_PRICE_PARAMETER, "missing product price parameter")));
+		product.setCreationDate(LocalDate.parse(
+				defineParameter(req, PRODUCT_CREATION_DATE_PARAMETER, "missing product creation date parameter"),
+				DateTimeFormatter.ISO_LOCAL_DATE));
 	}
 
 }

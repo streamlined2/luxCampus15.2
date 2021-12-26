@@ -4,8 +4,6 @@ import javax.servlet.http.HttpServletRequest;
 
 public class ListAllProductsServlet extends AbstractServlet {
 
-	protected static final String REDIRECTION_RESOURCE = "product-list.html";
-
 	@Override
 	public void doWork(HttpServletRequest req) {
 		fetchProducts();
@@ -13,7 +11,7 @@ public class ListAllProductsServlet extends AbstractServlet {
 
 	@Override
 	public String getRedirectionResource() {
-		return REDIRECTION_RESOURCE;
+		return "product-list.html";
 	}
 
 }

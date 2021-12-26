@@ -5,8 +5,6 @@ import javax.servlet.http.HttpServletRequest;
 
 public class CreateProductServlet extends AbstractServlet {
 
-	protected static final String REDIRECTION_RESOURCE = "new-product.html";
-
 	@Override
 	public void doWork(HttpServletRequest req) throws ServletException {
 		setTemplateParameter(CREATE_PRODUCT_ATTRIBUTE, Boolean.TRUE);
@@ -14,7 +12,7 @@ public class CreateProductServlet extends AbstractServlet {
 
 	@Override
 	public String getRedirectionResource() {
-		return REDIRECTION_RESOURCE;
+		return "new-product.html";
 	}
 
 }

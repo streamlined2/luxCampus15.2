@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 
 import org.training.campus.onlineshop.dao.DataAccessException;
@@ -16,18 +17,31 @@ import org.training.campus.onlineshop.entity.Product;
 
 public class JdbcProductDao implements ProductDao {
 
-	protected static final String FETCH_ALL_STATEMENT = "select id, name, price, creation_date from product order by name asc";
-	protected static final String INSERT_ENTITY_STATEMENT = "insert into product (name, price, creation_date) values(?,?,?)";
-	protected static final String UPDATE_ENTITY_STATEMENT = "update product set name=?, price=?, creation_date=? where id=?";
-	protected static final String DELETE_ENTITY_STATEMENT = "delete from product where id=?";
+	private static final String SCHEMA = "\"onlineshop\"";
+	private static final String TABLE = "product";
 	
-	private final Properties props;
-	
-	private ProductRowMapper mapper;
+	private static final String URL_KEY = "url";
+	private static final String USER_KEY = "user";
+	private static final String PASSWORD_KEY = "password";
 
-	public JdbcProductDao(Properties props) {
-		this.props = props;
+	protected static final String FETCH_ALL_STATEMENT = String
+			.format("select id, name, price, creation_date from %s.%s order by name asc", SCHEMA, TABLE);
+	protected static final String INSERT_ENTITY_STATEMENT = String
+			.format("insert into %s.%s (name, price, creation_date) values(?,?,?)", SCHEMA, TABLE);
+	protected static final String UPDATE_ENTITY_STATEMENT = String
+			.format("update %s.%s set name=?, price=?, creation_date=? where id=?", SCHEMA, TABLE);
+	protected static final String DELETE_ENTITY_STATEMENT = String.format("delete from %s.%s where id=?", SCHEMA,
+			TABLE);
+
+	private final Properties props;
+	private final ProductRowMapper mapper;
+
+	public JdbcProductDao(String url, String user, String password) {
 		mapper = new ProductRowMapper();
+		props = new Properties();
+		props.put(URL_KEY, Objects.requireNonNull(url, "jdbc url to DB shouldn't be null"));
+		props.put(USER_KEY, user);
+		props.put(PASSWORD_KEY, password);
 	}
 
 	public List<Product> getAll() {
@@ -108,6 +122,6 @@ public class JdbcProductDao implements ProductDao {
 	}
 
 	private Connection getConnection() throws SQLException {
-		return DriverManager.getConnection(props.getProperty("url"), props);
+		return DriverManager.getConnection(props.getProperty(URL_KEY), props);
 	}
 }
